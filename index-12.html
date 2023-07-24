@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="js/pixi.min.js"></script>
+    <script>
+        let app;
+        let bgBack;
+        let bgMiddle;
+        let bgFront;
+        let bgX = 0;
+        let bgSpeed = 1;
+
+        window.onload = function () {
+            keys = {};
+            app = new PIXI.Application({
+                width: 800,
+                height: 600,
+                backgroundColor: 0x1099bb
+            });
+            document.querySelector("#gameDiv").appendChild(app.view);
+
+            PIXI.Assets.add("bgBack", "images/forest-back.png");
+            PIXI.Assets.add("bgMiddle", "images/forest-middle.png");
+            PIXI.Assets.add("bgFront", "images/forest-front.png");
+            PIXI.Assets.load(["bgBack", "bgMiddle", "bgFront"]).then(initLevel);
+        }
+
+        function initLevel(textures) {
+            bgBack = createBg(textures["bgBack"]);
+            bgMiddle = createBg(textures["bgMiddle"]);
+            bgFront = createBg(textures["bgFront"]);
+            document.addEventListener("keyup", switchDirection);
+            app.ticker.add(gameLoop);
+        }
+
+        function createBg(texture) {
+            let tiling = new PIXI.TilingSprite(texture, 800, 600);
+            tiling.position.set(0, 0);
+            app.stage.addChild(tiling);
+            return tiling;
+        }
+
+        function gameLoop(delta) { 
+            updateBg();
+        }
+
+        function updateBg() {
+            bgX = (bgX + bgSpeed);
+            bgFront.tilePosition.x = bgX;
+            bgMiddle.tilePosition.x = bgX / 2;
+            bgBack.tilePosition.x = bgX / 4;
+        }
+
+        function switchDirection(e) {
+            if (e.keyCode == 37) {
+                bgSpeed -= 1;
+            } else if (e.keyCode == 39) {
+                bgSpeed += 1;
+            } else if (e.keyCode == 32) {
+                bgSpeed = 0;
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <div id="gameDiv"></div>
+</body>
+
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="js/pixi.min.js"></script>
+    <script>
+        let app;
+        let knight;
+        let wolf;
+
+        //class Monster extends Pixi.Sprite { }
+        class Monster {
+            constructor(x = 0, y = 0, texture, name = "none", hp = 100, speed = 5)
+            {
+                this.sprite = new PIXI.Sprite(texture);
+                this.sprite.anchor.set(0.5);
+                this.sprite.x = x;
+                this.sprite.y = y;
+                this.name = name;
+                this.hp = hp;
+                this.speed = speed;
+            }
+
+            status() {
+                return `${this.name} has ${this.hp} hit points`;
+            }
+
+            move() {
+                this.sprite.x += this.speed;
+                if (this.sprite.x > app.view.width - this.sprite.width / 2) {
+                    this.speed *= -1;
+                }
+                else if (this.sprite.x < this.sprite.width / 2) {
+                    this.speed *= -1;
+                }
+            }
+        }
+
+        window.onload = function() {
+            keys = {};
+            app = new PIXI.Application({
+                width: 800,
+                height: 600,
+                backgroundColor: 0x1099bb
+            });
+            document.querySelector("#gameDiv").appendChild(app.view);
+            PIXI.Assets.add("knight", "images/knight.png");
+            PIXI.Assets.add("wolf", "images/wolf.png");
+            PIXI.Assets.load(["knight", "wolf"]).then(onAssetsLoaded);
+        }
+
+        function onAssetsLoaded(textures) {
+            createMonsters(textures);
+            app.ticker.add(gameLoop);
+        }
+
+        function createMonsters(textures) {
+            knight = new Monster(100, 100, textures.knight, "Knight", 200, 6);
+            wolf = new Monster(100, 500, textures.wolf, "Wolf", 100, 10);
+            app.stage.addChild(knight.sprite);
+            app.stage.addChild(wolf.sprite);
+        }
+
+        function gameLoop(delta) {
+            knight.move();
+            wolf.move();
+        }
+    </script>
+</head>
+<body>
+    <div id="gameDiv"></div>
+</body>
+</html>

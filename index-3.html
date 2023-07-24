@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="js/pixi.min.js"></script>
+    <script>
+        let app;
+        window.onload = function() {
+            keys = {};
+            app = new PIXI.Application({
+                width: 800,
+                height: 600,
+                backgroundColor: 0x1099bb
+            });
+            document.body.appendChild(app.view);
+
+            PIXI.Assets.add("sprite00", "images/bloat0.png");
+            PIXI.Assets.add("sprite01", "images/bloat1.png");
+            PIXI.Assets.add("sprite02", "images/bloat2.png");
+            PIXI.Assets.add("sprite03", "images/bloat3.png");
+            PIXI.Assets.add("sprite04", "images/bloat4.png");
+            PIXI.Assets.add("sprite05", "images/bloat5.png");
+            PIXI.Assets.add("sprite06", "images/bloat6.png");
+            PIXI.Assets.add("sprite07", "images/bloat7.png");
+            PIXI.Assets.add("sprite08", "images/bloat8.png");
+            PIXI.Assets.add("sprite09", "images/bloat9.png");
+            PIXI.Assets.add("sprite10", "images/bloat10.png");
+            PIXI.Assets.add("player", "images/player.png");
+            const loadPromise = PIXI.Assets.load([ "sprite00", "sprite01", "sprite02", "sprite03", "sprite04", "sprite05", "sprite06", "sprite07", "sprite08", "sprite09", "sprite10", "player" ]);
+            loadPromise.then(doneLoading).catch(reportError);
+        }
+
+        function reportError(e) {
+            console.log("ERROR : " + e.message);
+        }
+
+        function doneLoading(textures) {
+            console.log("DONE LOADING");
+            player = new PIXI.Sprite(textures.player);
+            player.anchor.set(0.5);
+            player.x = app.view.width / 2;
+            player.y = app.view.height / 2;
+            app.stage.addChild(player);
+        }
+    </script>
+</head>
+<body>
+    <div id="keys"></div>
+</body>
+</html>

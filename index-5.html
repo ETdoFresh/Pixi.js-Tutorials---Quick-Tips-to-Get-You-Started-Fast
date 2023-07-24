@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="js/pixi.min.js"></script>
+    <script>
+        let app;
+        let speed = 5;
+        window.onload = function() {
+            keys = {};
+            app = new PIXI.Application({
+                width: 800,
+                height: 600,
+                backgroundColor: 0x1099bb
+            });
+            document.body.appendChild(app.view);
+
+            player = PIXI.Sprite.from('images/player.png');
+            player.anchor.set(0.5);
+            player.x = 16;
+            player.y = app.screen.height / 2;
+            app.stage.addChild(player);
+
+            enemy = PIXI.Sprite.from('images/player.png');
+            enemy.anchor.set(0.5);
+            enemy.x = app.screen.width - 16;
+            enemy.y = app.screen.height / 2;
+            app.stage.addChild(enemy);
+
+            app.ticker.add(gameLoop);
+        }
+
+        function gameLoop(delta) {
+            player.x += speed * delta;
+            enemy.x -= speed * delta;
+
+            if (rectsIntersect(player, enemy)) {
+                speed = 0;
+            }
+        }
+
+        function rectsIntersect(a, b) {
+            let aBox = a.getBounds();
+            let bBox = b.getBounds();
+            return aBox.x + aBox.width > bBox.x &&
+                aBox.x < bBox.x + bBox.width &&
+                aBox.y + aBox.height > bBox.y &&
+                aBox.y < bBox.y + bBox.height;
+        }
+    </script>
+</head>
+<body>
+    <div id="keys"></div>
+</body>
+</html>

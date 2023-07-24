@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="js/pixi.min.js"></script>
+    <script>
+        let app;
+        let button;
+        let isPointerOver = false;
+        let isPointerDown = false;
+        let spriteSheetTextures = {};
+
+        window.onload = function () {
+            keys = {};
+            app = new PIXI.Application({
+                width: 800,
+                height: 600,
+                backgroundColor: 0x1099bb
+            });
+            document.querySelector("#gameDiv").appendChild(app.view);
+
+            PIXI.Assets.load("images/buttonSheet.png").then(onAssetsLoaded);
+
+            app.ticker.add(gameLoop);
+        }
+
+        function onAssetsLoaded(e) {
+            let spriteSheet = PIXI.BaseTexture.from("images/buttonSheet.png");
+            spriteSheetTextures.normal = new PIXI.Texture(spriteSheet, new PIXI.Rectangle(147, 1, 27, 28));
+            spriteSheetTextures.over = new PIXI.Texture(spriteSheet, new PIXI.Rectangle(3, 4, 27, 26));
+            spriteSheetTextures.down = new PIXI.Texture(spriteSheet, new PIXI.Rectangle(30, 2, 57, 34));
+
+            button = new PIXI.Sprite(spriteSheetTextures.normal);
+            button.anchor.set(0.5);
+            button.x = app.view.width / 2;
+            button.y = app.view.height / 2;
+            button.interactive = true;
+            button.buttonMode = true;
+            button.on("pointerup", onPointerUp);
+            button.on("pointerdown", onPointerDown);
+            button.on("pointerover", onPointerOver);
+            button.on("pointerout", onPointerOut);
+            button.on("pointerupoutside", onPointerUpOutside);
+            app.stage.addChild(button);
+        }
+
+        function gameLoop(delta) { }
+
+        function onPointerUp(e) {
+            isPointerDown = false;
+            this.texture = isPointerOver ? spriteSheetTextures["over"] : spriteSheetTextures["normal"];
+        }
+
+        function onPointerDown(e) {
+            isPointerDown = true;
+            this.texture = spriteSheetTextures["down"];
+        }
+
+        function onPointerOver(e) {
+            isPointerOver = true;
+            this.texture = isPointerDown ? spriteSheetTextures["down"] : spriteSheetTextures["over"];
+        }
+
+        function onPointerOut(e) {
+            isPointerOver = false;
+            if (!isPointerDown) {
+                this.texture = spriteSheetTextures["normal"];
+            }
+        }
+
+        function onPointerUpOutside(e) {
+            isPointerDown = false;
+            isPointerOver = false;
+            this.texture = spriteSheetTextures["normal"];
+        }
+    </script>
+</head>
+
+<body>
+    <div id="gameDiv"></div>
+</body>
+
+</html>

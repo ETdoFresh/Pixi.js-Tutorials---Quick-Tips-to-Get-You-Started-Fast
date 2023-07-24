@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="js/pixi.min.js"></script>
+    <script>
+        let app;
+        let bullets = [];
+        let bulletSpeed = 10;
+
+        window.onload = function() {
+            keys = {};
+            app = new PIXI.Application({
+                width: 800,
+                height: 600,
+                backgroundColor: 0x1099bb
+            });
+            document.querySelector("#gameDiv").appendChild(app.view);
+
+            player = PIXI.Sprite.from('images/player.png');
+            player.anchor.set(0.5);
+            player.x = app.screen.width / 2;
+            player.y = app.screen.height / 2;
+            app.stage.addChild(player);
+
+            app.stage.interactive = true;
+            document.querySelector("#gameDiv").addEventListener("pointerdown", fireBullet);
+
+            app.ticker.add(gameLoop);
+        }
+
+        function fireBullet(e) {
+            console.log("FIRE BULLET");
+
+            let bullet = createBullet();
+            bullets.push(bullet);
+        }
+
+        function createBullet() {
+            let bullet = PIXI.Sprite.from('images/bullet.png');
+            bullet.anchor.set(0.5);
+            bullet.x = player.x;
+            bullet.y = player.y;
+            bullet.speed = bulletSpeed;
+            app.stage.addChild(bullet);
+            return bullet;
+        }
+
+        function gameLoop(delta) {
+            updateBullets(delta);
+        }
+
+        function updateBullets(delta) {
+            for (let i = 0; i < bullets.length; i++) {
+                let bullet = bullets[i];
+                bullet.y -= bullet.speed * delta;
+                if (bullet.y < 0) {
+                    bullets.splice(i, 1);
+                    app.stage.removeChild(bullet);
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+    <div id="gameDiv"></div>
+</body>
+</html>

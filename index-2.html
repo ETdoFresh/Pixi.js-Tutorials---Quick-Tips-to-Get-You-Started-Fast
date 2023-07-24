@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="js/pixi.min.js"></script>
+    <script>
+        let app;
+        window.onload = function() {
+            keys = {};
+            app = new PIXI.Application({
+                width: 800,
+                height: 600,
+                backgroundColor: 0x1099bb
+            });
+            document.body.appendChild(app.view);
+
+            player = PIXI.Sprite.from('images/player.png');
+            player.anchor.set(0.5);
+            player.x = app.screen.width / 2;
+            player.y = app.screen.height / 2;
+            app.stage.addChild(player);
+
+            window.addEventListener('keydown', onKeyDown);
+            window.addEventListener('keyup', onKeyUp);
+            app.ticker.add(gameLoop);
+            keysDiv = document.querySelector('#keys');
+        }
+
+        function onKeyDown(e) {
+            keys[e.keyCode] = true;
+        }
+
+        function onKeyUp(e) {
+            keys[e.keyCode] = false;
+        }
+
+        function gameLoop() {
+            keysDiv.innerHTML = JSON.stringify(keys);
+
+            if (keys['37'] || keys['65']) {
+                player.x -= 5;
+            }
+            if (keys['38'] || keys['87']) {
+                player.y -= 5;
+            }
+            if (keys['39'] || keys['68']) {
+                player.x += 5;
+            }
+            if (keys['40'] || keys['83']) {
+                player.y += 5;
+            }
+        }
+    </script>
+</head>
+<body>
+    <div id="keys"></div>
+</body>
+</html>

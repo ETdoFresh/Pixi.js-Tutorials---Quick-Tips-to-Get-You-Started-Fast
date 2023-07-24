@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="js/pixi.min.js"></script>
+    <script>
+        let app;
+        const NORMAL = 0xffffff;
+        const OVER = 0x00ff00;
+        const DOWN = 0xff0000;
+        let isPointerOver = false;
+        let isPointerDown = false;
+
+        window.onload = function() {
+            keys = {};
+            app = new PIXI.Application({
+                width: 800,
+                height: 600,
+                backgroundColor: 0x1099bb
+            });
+            document.querySelector("#gameDiv").appendChild(app.view);
+
+            let rect = new PIXI.Graphics();
+            rect.beginFill(NORMAL);
+            rect.drawRect((app.view.width / 2) - 100, (app.view.height / 2) - 50, 200, 100);
+            rect.endFill();
+            rect.interactive = true;
+            rect.buttonMode = true;
+            rect.on("pointerup", onPointerUp);
+            rect.on("pointerdown", onPointerDown);
+            rect.on("pointerover", onPointerOver);
+            rect.on("pointerout", onPointerOut);
+            rect.on("pointerupoutside", onPointerUpOutside);
+            app.stage.addChild(rect);
+
+            app.ticker.add(gameLoop);
+        }
+
+        function gameLoop(delta) { }
+
+        function onPointerUp(e) {
+            isPointerDown = false;
+            this.tint = isPointerOver ? OVER : NORMAL;
+        }
+
+        function onPointerDown(e) {
+            isPointerDown = true;
+            this.tint = DOWN;
+        }
+
+        function onPointerOver(e) {
+            isPointerOver = true;
+            this.tint = isPointerDown ? DOWN : OVER;
+        }
+
+        function onPointerOut(e) {
+            isPointerOver = false;
+            if (!isPointerDown) {
+                this.tint = NORMAL;
+            }
+        }
+
+        function onPointerUpOutside(e) {
+            isPointerDown = false;
+            isPointerOver = false;
+            this.tint = NORMAL;
+        }
+    </script>
+</head>
+<body>
+    <div id="gameDiv"></div>
+</body>
+</html>

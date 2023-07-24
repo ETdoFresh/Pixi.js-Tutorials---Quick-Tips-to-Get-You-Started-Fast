@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="js/pixi.min.js"></script>
+    <script>
+        let app;
+        let playerSheet = {};
+        let speed = 5;
+
+        window.onload = function() {
+            keys = {};
+            app = new PIXI.Application({
+                width: 800,
+                height: 600,
+                backgroundColor: 0x1099bb
+            });
+            document.body.appendChild(app.view);
+
+            PIXI.Assets.load("images/motw.png").then(onAssetsLoaded);
+
+            window.addEventListener('keydown', onKeyDown);
+            window.addEventListener('keyup', onKeyUp);
+            keysDiv = document.querySelector('#keys');
+        }
+
+        function onAssetsLoaded() {
+            createPlayerSheet();
+            createPlayer();
+            app.ticker.add(gameLoop);
+        }
+
+        function createPlayerSheet() {
+            let sheet = PIXI.BaseTexture.from("images/motw.png");
+            let w = 52;
+            let h = 72;
+            var textures = [
+                new PIXI.Texture(sheet, new PIXI.Rectangle(w * 0, h * 0, w, h)),
+                new PIXI.Texture(sheet, new PIXI.Rectangle(w * 1, h * 0, w, h)),
+                new PIXI.Texture(sheet, new PIXI.Rectangle(w * 2, h * 0, w, h)),
+                new PIXI.Texture(sheet, new PIXI.Rectangle(w * 0, h * 1, w, h)),
+                new PIXI.Texture(sheet, new PIXI.Rectangle(w * 1, h * 1, w, h)),
+                new PIXI.Texture(sheet, new PIXI.Rectangle(w * 2, h * 1, w, h)),
+                new PIXI.Texture(sheet, new PIXI.Rectangle(w * 0, h * 2, w, h)),
+                new PIXI.Texture(sheet, new PIXI.Rectangle(w * 1, h * 2, w, h)),
+                new PIXI.Texture(sheet, new PIXI.Rectangle(w * 2, h * 2, w, h)),
+                new PIXI.Texture(sheet, new PIXI.Rectangle(w * 0, h * 3, w, h)),
+                new PIXI.Texture(sheet, new PIXI.Rectangle(w * 1, h * 3, w, h)),
+                new PIXI.Texture(sheet, new PIXI.Rectangle(w * 2, h * 3, w, h)),
+            ]
+            playerSheet["standSouth"] = [textures[1]];
+            playerSheet["standWest"] = [textures[4]];
+            playerSheet["standEast"] = [textures[7]];
+            playerSheet["standNorth"] = [textures[10]];
+            playerSheet["walkSouth"] = [textures[0], textures[1], textures[2]];
+            playerSheet["walkWest"] = [textures[3], textures[4], textures[5]];
+            playerSheet["walkEast"] = [textures[6], textures[7], textures[8]];
+            playerSheet["walkNorth"] = [textures[9], textures[10], textures[11]];
+        }
+
+        function createPlayer() {
+            player = new PIXI.AnimatedSprite(playerSheet.standSouth);
+            player.animationSpeed = 0.3;
+            player.loop = false;
+            player.anchor.set(0.5);
+            player.x = app.view.width / 2;
+            player.y = app.view.height / 2;
+            player.play();
+            app.stage.addChild(player);
+        }
+
+        function onKeyDown(e) {
+            keys[e.keyCode] = true;
+        }
+
+        function onKeyUp(e) {
+            keys[e.keyCode] = false;
+        }
+
+        function gameLoop(delta) {
+            keysDiv.innerHTML = JSON.stringify(keys);
+
+            if (keys['37'] || keys['65']) {
+                if (!player.playing) {
+                    player.textures = playerSheet.walkWest;
+                    player.play();
+                }
+                player.x -= speed * delta;
+            }
+            if (keys['38'] || keys['87']) {
+                if (!player.playing) {
+                    player.textures = playerSheet.walkNorth;
+                    player.play();
+                }
+                player.y -= speed * delta;
+            }
+            if (keys['39'] || keys['68']) {
+                if (!player.playing) {
+                    player.textures = playerSheet.walkEast;
+                    player.play();
+                }
+                player.x += speed * delta;
+            }
+            if (keys['40'] || keys['83']) {
+                if (!player.playing) {
+                    player.textures = playerSheet.walkSouth;
+                    player.play();
+                }
+                player.y += speed * delta;
+            }
+        }
+    </script>
+</head>
+<body>
+    <div id="keys"></div>
+</body>
+</html>
